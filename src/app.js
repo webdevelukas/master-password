@@ -1,4 +1,10 @@
 const { readSecrets, writeSecrets } = require("./models/secrets");
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 const [action, key, value] = process.argv.slice(2);
 
@@ -27,10 +33,24 @@ const commands = {
 };
 
 const command = commands[action];
-if (!command) {
+if (command) {
+  requirePassword();
+} else if (!command) {
   throw new Error("unknown action");
 }
-command(key, value);
+
+// Ask the user for a password to run the functions
+function requirePassword() {
+  rl.question("Whats your master-password? ", answer => {
+    if (answer === "helloWorld") {
+      command(key, value);
+      rl.close();
+    } else {
+      console.log("Your password is not correct, please try again.");
+      rl.close();
+    }
+  });
+}
 
 /* 
 My solution
