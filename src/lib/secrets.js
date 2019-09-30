@@ -14,11 +14,7 @@ function readSecrets() {
 }
 
 function writeSecrets(secrets) {
-  fs.writeFileSync(
-    fileName,
-    JSON.stringify(secrets),
-    console.log("Write secrets", secrets)
-  );
+  fs.writeFileSync(fileName, JSON.stringify(secrets));
 }
 
 exports.readSecrets = readSecrets;

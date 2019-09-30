@@ -1,56 +1,29 @@
-const { readSecrets, writeSecrets } = require("./models/secrets");
 const readline = require("readline");
+const { executeCommand } = require("./lib/commands");
+
+const userArgv = process.argv.slice(2);
+const [action, key, value] = userArgv;
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-const [action, key, value] = process.argv.slice(2);
+const masterPassword = "helloWorld";
 
-function set(key, value) {
-  const secrets = readSecrets();
-  secrets[key] = value;
-  writeSecrets(secrets);
-}
+rl.question("Whats your master password? \n", password => {
+  if (password === masterPassword) {
+    executeCommand(action, key, value);
+  } else {
+    console.log("\ninvalid master password");
+  }
+  rl.close();
+});
 
-function unset(key) {
-  const secrets = readSecrets();
-  delete secrets[key];
-  writeSecrets(secrets);
-}
-
-function get(key) {
-  const secrets = readSecrets();
-  const secret = secrets[key];
-  console.log(secret);
-}
-
-const commands = {
-  set,
-  get,
-  unset
+// Override default output to hide password
+rl._writeToOutput = function _writeToOutput() {
+  rl.output.write("*");
 };
-
-const command = commands[action];
-if (command) {
-  requirePassword();
-} else if (!command) {
-  throw new Error("unknown action");
-}
-
-// Ask the user for a password to run the functions
-function requirePassword() {
-  rl.question("Whats your master-password? ", answer => {
-    if (answer === "helloWorld") {
-      command(key, value);
-      rl.close();
-    } else {
-      console.log("Your password is not correct, please try again.");
-      rl.close();
-    }
-  });
-}
 
 /* 
 My solution
