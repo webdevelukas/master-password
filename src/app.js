@@ -1,4 +1,7 @@
 const readline = require("readline");
+const crypto = require("crypto");
+const fs = require("fs");
+
 const { executeCommand } = require("./lib/commands");
 
 const userArgv = process.argv.slice(2);
@@ -9,11 +12,12 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const masterPassword = "helloWorld";
+const masterPasswordHash = fs.readFileSync(".masterPassword", "utf-8");
 
 rl.question("Whats your master password? \n", password => {
-  if (password === masterPassword) {
-    executeCommand(action, key, value);
+  rl.output.write("*");
+  if (verifyHash(password, masterPasswordHash)) {
+    executeCommand(password, action, key, value);
   } else {
     console.log("\ninvalid master password");
   }
@@ -24,6 +28,17 @@ rl.question("Whats your master password? \n", password => {
 rl._writeToOutput = function _writeToOutput() {
   rl.output.write("*");
 };
+
+// Checking the password hash
+function verifyHash(password, original) {
+  const originalHash = original.split("$")[1];
+  const salt = original.split("$")[0];
+  const hash = crypto
+    .pbkdf2Sync(password, salt, 2048, 32, "sha512")
+    .toString("hex");
+
+  return hash === originalHash;
+}
 
 /* 
 My solution
