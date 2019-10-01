@@ -25,7 +25,7 @@ function get(password, key) {
   let decryptedSecret = cryptoKey.update(secret, "hex", "utf8");
   decryptedSecret += cryptoKey.final("utf8");
 
-  console.log(`\nYour ${key.toUpperCase()} is: ${decryptedSecret}`);
+  return `Your ${key.toUpperCase()} is: ${decryptedSecret}`;
 }
 
 const commands = {
@@ -39,7 +39,10 @@ function executeCommand(password, action, key, value) {
   if (!command) {
     throw new Error("unknown action");
   }
-  command(password, key, value);
+  return command(password, key, value);
 }
 
 exports.executeCommand = executeCommand;
+exports.set = set;
+exports.unset = unset;
+exports.get = get;
