@@ -14,7 +14,10 @@ const server = http.createServer(function(request, response) {
 
   try {
     const path = request.url.slice(1);
-    const secret = get("helloWorld", path);
+    const parsedPath = url.parse(path);
+    const pathName = parsedPath.pathname;
+
+    const secret = get("helloWorld", pathName);
 
     response.write(secret);
   } catch (error) {
