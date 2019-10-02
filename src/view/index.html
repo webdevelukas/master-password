@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Master Password</title>
+  </head>
+  <body>
+    <h1>Welcome to Master Password</h1>
+
+    <form id="submitGetSecret">
+      <input id="secretInput" type="text" placeholder="enter secret name" />
+      <input id="submitButton" type="submit" value="get secret" />
+    </form>
+
+    <p id="showSecret"></p>
+
+    <form id="submitPostSecret">
+      <input id="inputSecretKey" type="text" placeholder="enter secret key" />
+      <input id="inputSecretValue" type="password" />
+      <input type="submit" value="post secret" />
+    </form>
+
+    <script>
+      const secretInput = document.querySelector("#secretInput");
+      const submitGetSecret = document.querySelector("#submitGetSecret");
+      const submitPostSecret = document.querySelector("#submitPostSecret");
+      const showSecret = document.querySelector("#showSecret");
+
+      async function handleGetSecret(event) {
+        event.preventDefault();
+
+        if (secretInput.value) {
+          const url = `/${secretInput.value}`;
+          const secret = await fetch(url).then(response => response.text());
+          showSecret.innerText = secret;
+        } else if (!secretInput.value) {
+          showSecret.innerText = null;
+        }
+      }
+
+      function handlePostSecret(event) {
+        event.preventDefault();
+
+        const inputSecretKey = document.querySelector("#inputSecretKey");
+        const inputSecretValue = document.querySelector("#inputSecretValue");
+
+        console.log(inputSecretKey.value, inputSecretValue.value);
+      }
+
+      submitGetSecret.addEventListener("submit", handleGetSecret);
+      submitPostSecret.addEventListener("submit", handlePostSecret);
+    </script>
+  </body>
+</html>
