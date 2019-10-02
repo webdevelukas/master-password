@@ -46,6 +46,11 @@
         const inputSecretKey = document.querySelector("#inputSecretKey");
         const inputSecretValue = document.querySelector("#inputSecretValue");
 
+        fetch(`/${inputSecretKey.value}`, {
+          method: "POST",
+          body: inputSecretValue.value
+        }).then(response => response.text());
+
         console.log(inputSecretKey.value, inputSecretValue.value);
       }
 

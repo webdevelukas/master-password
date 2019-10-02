@@ -2,10 +2,11 @@ const http = require("http");
 const url = require("url");
 const fs = require("fs");
 
-const { get } = require("./lib/commands");
+const { get, set } = require("./lib/commands");
 
 const server = http.createServer(function(request, response) {
-  // use url.parse to seperate url to pathname and search
+  const { pathname } = url.parse(request.url);
+
   if (request.url === "/favicon.ico") {
     response.writeHead(404);
     return response.end();
@@ -17,17 +18,27 @@ const server = http.createServer(function(request, response) {
   }
 
   try {
-    const path = request.url.slice(1);
-    const { pathname } = url.parse(path);
+    const path = pathname.slice(1);
 
-    const secret = get("helloWorld", pathname);
-
-    response.write(secret);
+    if (request.method === "GET") {
+      const secret = get("helloWorld", path);
+      response.end(secret);
+    } else if (request.method === "POST") {
+      let body = "";
+      request.on("data", function(data) {
+        body += data;
+        console.log("Partial body: " + body);
+      });
+      request.on("end", function() {
+        console.log("Body: " + body);
+        set("helloWorld", path, body);
+        response.writeHead(200, { "Content-Type": "text/html" });
+        response.end("post received");
+      });
+    }
   } catch (error) {
-    response.write("Can not read secret");
+    response.end("Can not read secret");
   }
-
-  response.end();
 });
 
 server.listen(8080, () => {

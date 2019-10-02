@@ -25,7 +25,7 @@ function get(password, key) {
   let decryptedSecret = cryptoKey.update(secret, "hex", "utf8");
   decryptedSecret += cryptoKey.final("utf8");
 
-  return `Your ${key.toUpperCase()} is: ${decryptedSecret}`;
+  return decryptedSecret;
 }
 
 const commands = {
